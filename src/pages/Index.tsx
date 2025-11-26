@@ -1,15 +1,20 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { TabType } from '@/types/calculator';
 import { useCalculator } from '@/hooks/useCalculator';
 import { TabNavigation } from '@/components/calculator/TabNavigation';
+import { LoginArea } from '@/components/calculator/LoginArea';
 import { ImoveisTab } from '@/components/calculator/ImoveisTab';
 import { DespesasTab } from '@/components/calculator/DespesasTab';
 import { InvestimentosTab } from '@/components/calculator/InvestimentosTab';
 import { ResultadosTab } from '@/components/calculator/ResultadosTab';
 import { Building2, Calculator } from 'lucide-react';
+import { toast } from 'sonner';
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState<TabType>('imoveis');
+  const [currentUser, setCurrentUser] = useState<string | null>(() => {
+    return localStorage.getItem('calculadora_currentUser');
+  });
   
   const {
     imoveis,
@@ -24,7 +29,29 @@ const Index = () => {
     removeDespesa,
     addInvestimento,
     removeInvestimento,
-  } = useCalculator();
+    clearAllData,
+  } = useCalculator(currentUser);
+
+  // Persist current user
+  useEffect(() => {
+    if (currentUser) {
+      localStorage.setItem('calculadora_currentUser', currentUser);
+    } else {
+      localStorage.removeItem('calculadora_currentUser');
+    }
+  }, [currentUser]);
+
+  const handleLogin = (username: string) => {
+    setCurrentUser(username);
+  };
+
+  const handleLogout = () => {
+    setCurrentUser(null);
+    clearAllData();
+  };
+
+  // Show warning if not logged in
+  const showLoginWarning = !currentUser;
 
   return (
     <div className="min-h-screen bg-background">
@@ -52,6 +79,22 @@ const Index = () => {
 
       {/* Main Content */}
       <main className="container max-w-6xl mx-auto px-4 py-6">
+        {/* Login Area */}
+        <LoginArea
+          currentUser={currentUser}
+          onLogin={handleLogin}
+          onLogout={handleLogout}
+        />
+
+        {/* Warning if not logged in */}
+        {showLoginWarning && (
+          <div className="bg-warning/10 border border-warning/30 text-warning-foreground rounded-xl p-4 mb-6 text-center">
+            <p className="text-sm font-medium text-warning">
+              ⚠️ Faça login para guardar os seus dados. Sem login, os dados serão perdidos ao fechar o navegador.
+            </p>
+          </div>
+        )}
+
         <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} />
 
         {activeTab === 'imoveis' && (
@@ -88,7 +131,7 @@ const Index = () => {
       {/* Footer */}
       <footer className="border-t border-border/50 py-4 mt-8">
         <div className="container max-w-6xl mx-auto px-4 text-center text-sm text-muted-foreground">
-          <p>Os dados são guardados localmente no seu navegador.</p>
+          <p>Os dados são guardados localmente no seu navegador {currentUser && `(utilizador: ${currentUser})`}.</p>
         </div>
       </footer>
     </div>
