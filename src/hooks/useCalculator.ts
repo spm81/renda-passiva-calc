@@ -1,44 +1,55 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Imovel, DespesaExtra, Investimento, CalculatedImovel, Resultados } from '@/types/calculator';
 
-const STORAGE_KEYS = {
-  imoveis: 'calculadora_imoveis',
-  despesas: 'calculadora_despesas',
-  investimentos: 'calculadora_investimentos',
-};
-
 function generateId(): string {
   return Math.random().toString(36).substring(2, 9);
 }
 
-export function useCalculator() {
-  const [imoveis, setImoveis] = useState<Imovel[]>(() => {
-    const saved = localStorage.getItem(STORAGE_KEYS.imoveis);
-    return saved ? JSON.parse(saved) : [];
-  });
+function getStorageKeys(username: string | null) {
+  const prefix = username ? `calculadora_${username}_` : 'calculadora_';
+  return {
+    imoveis: `${prefix}imoveis`,
+    despesas: `${prefix}despesas`,
+    investimentos: `${prefix}investimentos`,
+  };
+}
 
-  const [despesas, setDespesas] = useState<DespesaExtra[]>(() => {
-    const saved = localStorage.getItem(STORAGE_KEYS.despesas);
-    return saved ? JSON.parse(saved) : [];
-  });
+export function useCalculator(currentUser: string | null) {
+  const storageKeys = useMemo(() => getStorageKeys(currentUser), [currentUser]);
 
-  const [investimentos, setInvestimentos] = useState<Investimento[]>(() => {
-    const saved = localStorage.getItem(STORAGE_KEYS.investimentos);
-    return saved ? JSON.parse(saved) : [];
-  });
+  const [imoveis, setImoveis] = useState<Imovel[]>([]);
+  const [despesas, setDespesas] = useState<DespesaExtra[]>([]);
+  const [investimentos, setInvestimentos] = useState<Investimento[]>([]);
+
+  // Load data when user changes
+  useEffect(() => {
+    const savedImoveis = localStorage.getItem(storageKeys.imoveis);
+    const savedDespesas = localStorage.getItem(storageKeys.despesas);
+    const savedInvestimentos = localStorage.getItem(storageKeys.investimentos);
+
+    setImoveis(savedImoveis ? JSON.parse(savedImoveis) : []);
+    setDespesas(savedDespesas ? JSON.parse(savedDespesas) : []);
+    setInvestimentos(savedInvestimentos ? JSON.parse(savedInvestimentos) : []);
+  }, [storageKeys]);
 
   // Persist to localStorage
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEYS.imoveis, JSON.stringify(imoveis));
-  }, [imoveis]);
+    if (currentUser) {
+      localStorage.setItem(storageKeys.imoveis, JSON.stringify(imoveis));
+    }
+  }, [imoveis, storageKeys, currentUser]);
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEYS.despesas, JSON.stringify(despesas));
-  }, [despesas]);
+    if (currentUser) {
+      localStorage.setItem(storageKeys.despesas, JSON.stringify(despesas));
+    }
+  }, [despesas, storageKeys, currentUser]);
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEYS.investimentos, JSON.stringify(investimentos));
-  }, [investimentos]);
+    if (currentUser) {
+      localStorage.setItem(storageKeys.investimentos, JSON.stringify(investimentos));
+    }
+  }, [investimentos, storageKeys, currentUser]);
 
   // Imoveis CRUD
   const addImovel = useCallback((imovel: Omit<Imovel, 'id'>) => {
@@ -164,6 +175,13 @@ export function useCalculator() {
     [imoveis, calculateImovel]
   );
 
+  // Clear all data
+  const clearAllData = useCallback(() => {
+    setImoveis([]);
+    setDespesas([]);
+    setInvestimentos([]);
+  }, []);
+
   return {
     imoveis,
     despesas,
@@ -180,5 +198,6 @@ export function useCalculator() {
     updateInvestimento,
     removeInvestimento,
     calculateImovel,
+    clearAllData,
   };
 }
