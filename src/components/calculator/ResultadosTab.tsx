@@ -95,18 +95,11 @@ export function ResultadosTab({ resultados }: ResultadosTabProps) {
             variant="success"
           />
           <StatCard
-            label="Após Despesas Fixas"
+            label="Após Despesas Fixas dos Imóveis"
             value={formatCurrency(resultados.rendaLiquidaAposDespesasMensal)}
             subValue={`${formatCurrency(resultados.rendaLiquidaAposDespesasAnual)}/ano`}
             icon={<TrendingUp className="w-5 h-5" />}
             variant="success"
-          />
-          <StatCard
-            label="Despesas Extras"
-            value={formatCurrency(resultados.despesasExtrasMensal)}
-            subValue={`${formatCurrency(resultados.despesasExtrasAnual)}/ano`}
-            icon={<Receipt className="w-5 h-5" />}
-            variant="warning"
           />
         </div>
       </div>
@@ -115,7 +108,7 @@ export function ResultadosTab({ resultados }: ResultadosTabProps) {
       <div className="card-elevated p-5">
         <h3 className="section-title flex items-center gap-2">
           <PiggyBank className="w-5 h-5 text-primary" />
-          Renda Final (Imóveis + Investimentos)
+          Renda Final (Imóveis + Investimentos - Despesas Extras)
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <StatCard
