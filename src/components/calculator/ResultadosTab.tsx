@@ -123,7 +123,13 @@ export function ResultadosTab({ resultados }: ResultadosTabProps) {
             subValue={`${formatCurrency(resultados.investimentosAnual)}/ano`}
             variant="success"
           />
-          <div className="stat-card sm:col-span-2 bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
+          <StatCard
+            label="Despesas Extras"
+            value={formatCurrency(resultados.despesasExtrasMensal)}
+            subValue={`${formatCurrency(resultados.despesasExtrasAnual)}/ano`}
+            variant="warning"
+          />
+          <div className="stat-card bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
             <p className="result-label">Renda Total Final</p>
             <p className="text-3xl font-bold text-success">
               {formatCurrency(resultados.rendaComInvestimentosMensal)}
