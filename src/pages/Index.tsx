@@ -106,10 +106,6 @@ const Index = () => {
           currentUser={currentUser}
           onLogin={handleLogin}
           onLogout={handleLogout}
-          imoveis={imoveis}
-          despesas={despesas}
-          investimentos={investimentos}
-          onDataLoaded={handleDataLoaded}
         />
 
         {/* Warning if not logged in */}
