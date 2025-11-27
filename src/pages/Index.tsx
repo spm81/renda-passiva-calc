@@ -50,6 +50,28 @@ const Index = () => {
     clearAllData();
   };
 
+  const handleDataLoaded = (data: any) => {
+    // Clear current data first
+    clearAllData();
+    
+    // Load new data
+    if (data.imoveis) {
+      data.imoveis.forEach((imovel: any) => {
+        addImovel(imovel);
+      });
+    }
+    if (data.despesasExtras) {
+      data.despesasExtras.forEach((despesa: any) => {
+        addDespesa(despesa);
+      });
+    }
+    if (data.investimentos) {
+      data.investimentos.forEach((inv: any) => {
+        addInvestimento(inv);
+      });
+    }
+  };
+
   // Show warning if not logged in
   const showLoginWarning = !currentUser;
 
@@ -84,6 +106,10 @@ const Index = () => {
           currentUser={currentUser}
           onLogin={handleLogin}
           onLogout={handleLogout}
+          imoveis={imoveis}
+          despesas={despesas}
+          investimentos={investimentos}
+          onDataLoaded={handleDataLoaded}
         />
 
         {/* Warning if not logged in */}
