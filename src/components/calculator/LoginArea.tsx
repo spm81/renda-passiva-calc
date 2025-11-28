@@ -72,7 +72,7 @@ export function LoginArea({ currentUser, onLogin, onLogout, imoveis, despesas, i
       toast.success('Dados guardados no disco local com sucesso!');
     } catch (error: any) {
       console.error('Erro ao guardar:', error);
-      toast.error('Erro ao guardar dados: ' + error.message);
+      toast.error('Erro ao guardar: Certifique-se que o servidor está a correr (node server.js)');
     } finally {
       setIsSaving(false);
     }
@@ -100,7 +100,7 @@ export function LoginArea({ currentUser, onLogin, onLogout, imoveis, despesas, i
       }
     } catch (error: any) {
       console.error('Erro ao carregar:', error);
-      toast.error('Erro ao carregar dados: ' + error.message);
+      toast.error('Erro ao carregar: Certifique-se que o servidor está a correr (node server.js)');
     } finally {
       setIsLoading(false);
     }
