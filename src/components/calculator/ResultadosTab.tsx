@@ -113,8 +113,8 @@ export function ResultadosTab({ resultados }: ResultadosTabProps) {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <StatCard
             label="Renda Imóveis"
-            value={formatCurrency(resultados.rendaFinalMensal)}
-            subValue={`${formatCurrency(resultados.rendaFinalAnual)}/ano`}
+            value={formatCurrency(resultados.rendaLiquidaAposDespesasMensal)}
+            subValue={`${formatCurrency(resultados.rendaLiquidaAposDespesasAnual)}/ano`}
             variant="success"
           />
           <StatCard
