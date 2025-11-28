@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { LogIn, LogOut, User, Save, Download } from 'lucide-react';
 import { toast } from 'sonner';
-import { supabase } from '@/integrations/supabase/client';
+
 
 interface LoginAreaProps {
   currentUser: string | null;
@@ -43,29 +43,36 @@ export function LoginArea({ currentUser, onLogin, onLogout, imoveis, despesas, i
 
   const handleSaveToServer = async () => {
     if (!currentUser) {
-      toast.error('Faça login primeiro');
+      toast.error('Faça login primeiro!');
       return;
     }
 
     setIsSaving(true);
     try {
-      const { data, error } = await supabase.functions.invoke('save-data', {
-        body: {
+      const response = await fetch('http://localhost:3001/api/save', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
           username: currentUser,
           data: {
             imoveis,
             despesasExtras: despesas,
             investimentos
           }
-        }
+        })
       });
 
-      if (error) throw error;
-
-      toast.success('Dados guardados no servidor!');
-    } catch (error) {
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Erro ao guardar');
+      }
+      
+      toast.success('Dados guardados no disco local com sucesso!');
+    } catch (error: any) {
       console.error('Erro ao guardar:', error);
-      toast.error('Erro ao guardar dados no servidor');
+      toast.error('Erro ao guardar dados: ' + error.message);
     } finally {
       setIsSaving(false);
     }
@@ -73,27 +80,27 @@ export function LoginArea({ currentUser, onLogin, onLogout, imoveis, despesas, i
 
   const handleLoadFromServer = async () => {
     if (!currentUser) {
-      toast.error('Faça login primeiro');
+      toast.error('Faça login primeiro!');
       return;
     }
 
     setIsLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke('load-data', {
-        body: { username: currentUser }
-      });
+      const response = await fetch(`http://localhost:3001/api/load/${currentUser}`);
 
-      if (error) throw error;
-
-      if (data && data.imoveis && data.despesasExtras && data.investimentos) {
-        onDataLoaded(data);
-        toast.success('Dados carregados do servidor!');
-      } else {
-        toast.error('Nenhum dado guardado para este utilizador');
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Erro ao carregar');
       }
-    } catch (error) {
+      
+      const data = await response.json();
+      if (data) {
+        onDataLoaded(data);
+        toast.success('Dados carregados do disco local com sucesso!');
+      }
+    } catch (error: any) {
       console.error('Erro ao carregar:', error);
-      toast.error('Erro ao carregar dados do servidor');
+      toast.error('Erro ao carregar dados: ' + error.message);
     } finally {
       setIsLoading(false);
     }
