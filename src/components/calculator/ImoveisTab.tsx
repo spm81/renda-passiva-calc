@@ -288,7 +288,6 @@ export function ImoveisTab({ imoveis, calculatedImoveis, onAdd, onUpdate, onRemo
                     <PieChart>
                       <Pie
                         data={[
-                          { name: 'Renda', value: imovel.renda },
                           { name: 'Imposto', value: imovel.irValor },
                           { name: 'Despesas', value: imovel.despesasMensais },
                           { name: 'Líquido', value: imovel.rendaLiquidaAposDespesas },
@@ -301,7 +300,6 @@ export function ImoveisTab({ imoveis, calculatedImoveis, onAdd, onUpdate, onRemo
                         fill="#8884d8"
                         dataKey="value"
                       >
-                        <Cell fill="hsl(var(--primary))" />
                         <Cell fill="hsl(var(--destructive))" />
                         <Cell fill="hsl(var(--warning))" />
                         <Cell fill="hsl(var(--success))" />
