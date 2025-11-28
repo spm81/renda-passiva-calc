@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Imovel, CalculatedImovel } from '@/types/calculator';
 import { Plus, Trash2, Building2 } from 'lucide-react';
 import { formatCurrency } from '@/lib/format';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 interface ImoveisTabProps {
   imoveis: Imovel[];
@@ -251,27 +252,76 @@ export function ImoveisTab({ imoveis, calculatedImoveis, onAdd, onUpdate, onRemo
 
                 {/* Calculated Values */}
                 <div className="divider" />
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 text-sm">
-                  <div className="bg-background/50 rounded-lg p-2">
-                    <p className="text-xs text-muted-foreground">Renda</p>
-                    <p className="font-semibold">{formatCurrency(imovel.renda)}</p>
+                
+                {/* Detalhes Financeiros */}
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-4">
+                  <div className="stat-card">
+                    <p className="result-label">Renda</p>
+                    <p className="result-value text-foreground">{formatCurrency(imovel.renda)}</p>
+                    <p className="text-xs text-muted-foreground">{formatCurrency(imovel.rendaAnual)} / ano</p>
                   </div>
-                  <div className="bg-background/50 rounded-lg p-2">
-                    <p className="text-xs text-muted-foreground">Imposto</p>
-                    <p className="font-semibold text-destructive">-{formatCurrency(imovel.irValor)}</p>
+                  <div className="stat-card">
+                    <p className="result-label">Imposto</p>
+                    <p className="result-value text-destructive">-{formatCurrency(imovel.irValor)}</p>
+                    <p className="text-xs text-muted-foreground">-{formatCurrency(imovel.impostoAnual)} / ano</p>
                   </div>
-                  <div className="bg-background/50 rounded-lg p-2">
-                    <p className="text-xs text-muted-foreground">Despesas</p>
-                    <p className="font-semibold text-destructive">-{formatCurrency(imovel.despesasMensais)}</p>
+                  <div className="stat-card">
+                    <p className="result-label">Despesas</p>
+                    <p className="result-value text-destructive">-{formatCurrency(imovel.despesasMensais)}</p>
+                    <p className="text-xs text-muted-foreground">-{formatCurrency(imovel.despesasAnuais)} / ano</p>
                   </div>
-                  <div className="bg-background/50 rounded-lg p-2">
-                    <p className="text-xs text-muted-foreground">Líquido</p>
-                    <p className="font-semibold text-success">{formatCurrency(imovel.rendaLiquida)}</p>
+                  <div className="stat-card">
+                    <p className="result-label">Líquido</p>
+                    <p className="result-value text-success">{formatCurrency(imovel.rendaLiquida)}</p>
+                    <p className="text-xs text-muted-foreground">{formatCurrency(imovel.rendaLiquidaAnual)} / ano</p>
                   </div>
-                  <div className="bg-background/50 rounded-lg p-2 col-span-2">
-                    <p className="text-xs text-muted-foreground">Líquido após Despesas</p>
-                    <p className="font-semibold text-success">{formatCurrency(imovel.rendaLiquidaAposDespesas)}</p>
+                  <div className="stat-card">
+                    <p className="result-label">Líquido após Despesas</p>
+                    <p className="result-value text-success">{formatCurrency(imovel.rendaLiquidaAposDespesas)}</p>
+                    <p className="text-xs text-muted-foreground">{formatCurrency(imovel.rendaLiquidaAnualAposDespesas)} / ano</p>
                   </div>
+                </div>
+
+                {/* Gráfico */}
+                <div className="h-64 w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart
+                      data={[
+                        {
+                          name: 'Mensal',
+                          Renda: imovel.renda,
+                          Imposto: imovel.irValor,
+                          Despesas: imovel.despesasMensais,
+                          Líquido: imovel.rendaLiquidaAposDespesas,
+                        },
+                        {
+                          name: 'Anual',
+                          Renda: imovel.rendaAnual,
+                          Imposto: imovel.impostoAnual,
+                          Despesas: imovel.despesasAnuais,
+                          Líquido: imovel.rendaLiquidaAnualAposDespesas,
+                        },
+                      ]}
+                      margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                      <XAxis dataKey="name" className="text-muted-foreground" />
+                      <YAxis className="text-muted-foreground" />
+                      <Tooltip
+                        contentStyle={{
+                          backgroundColor: 'hsl(var(--card))',
+                          border: '1px solid hsl(var(--border))',
+                          borderRadius: '8px',
+                        }}
+                        formatter={(value: number) => formatCurrency(value)}
+                      />
+                      <Legend />
+                      <Bar dataKey="Renda" fill="hsl(var(--primary))" />
+                      <Bar dataKey="Imposto" fill="hsl(var(--destructive))" />
+                      <Bar dataKey="Despesas" fill="hsl(var(--warning))" />
+                      <Bar dataKey="Líquido" fill="hsl(var(--success))" />
+                    </BarChart>
+                  </ResponsiveContainer>
                 </div>
               </div>
             ))}

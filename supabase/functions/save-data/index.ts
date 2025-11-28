@@ -21,15 +21,6 @@ Deno.serve(async (req) => {
       }
     );
 
-    const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
-    
-    if (userError || !user) {
-      return new Response(
-        JSON.stringify({ error: 'Não autorizado' }),
-        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
     const { username, data } = await req.json();
     
     if (!username || !data) {
@@ -39,8 +30,8 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Criar o caminho do ficheiro no formato: userId/username.json
-    const filePath = `${user.id}/${username}.json`;
+    // Criar o caminho do ficheiro no formato: username.json
+    const filePath = `${username}.json`;
     
     // Converter dados para JSON
     const jsonData = JSON.stringify(data);
