@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Imovel, CalculatedImovel } from '@/types/calculator';
 import { Plus, Trash2, Building2 } from 'lucide-react';
 import { formatCurrency } from '@/lib/format';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 interface ImoveisTabProps {
   imoveis: Imovel[];
@@ -282,31 +282,30 @@ export function ImoveisTab({ imoveis, calculatedImoveis, onAdd, onUpdate, onRemo
                   </div>
                 </div>
 
-                {/* Gráfico */}
-                <div className="h-64 w-full">
+                {/* Gráfico de Pizza */}
+                <div className="h-80 w-full">
                   <ResponsiveContainer width="100%" height="100%">
-                    <BarChart
-                      data={[
-                        {
-                          name: 'Mensal',
-                          Renda: imovel.renda,
-                          Imposto: imovel.irValor,
-                          Despesas: imovel.despesasMensais,
-                          Líquido: imovel.rendaLiquidaAposDespesas,
-                        },
-                        {
-                          name: 'Anual',
-                          Renda: imovel.rendaAnual,
-                          Imposto: imovel.impostoAnual,
-                          Despesas: imovel.despesasAnuais,
-                          Líquido: imovel.rendaLiquidaAnualAposDespesas,
-                        },
-                      ]}
-                      margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-                    >
-                      <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                      <XAxis dataKey="name" className="text-muted-foreground" />
-                      <YAxis className="text-muted-foreground" />
+                    <PieChart>
+                      <Pie
+                        data={[
+                          { name: 'Renda', value: imovel.renda },
+                          { name: 'Imposto', value: imovel.irValor },
+                          { name: 'Despesas', value: imovel.despesasMensais },
+                          { name: 'Líquido', value: imovel.rendaLiquidaAposDespesas },
+                        ]}
+                        cx="50%"
+                        cy="50%"
+                        labelLine={false}
+                        label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                        outerRadius={100}
+                        fill="#8884d8"
+                        dataKey="value"
+                      >
+                        <Cell fill="hsl(var(--primary))" />
+                        <Cell fill="hsl(var(--destructive))" />
+                        <Cell fill="hsl(var(--warning))" />
+                        <Cell fill="hsl(var(--success))" />
+                      </Pie>
                       <Tooltip
                         contentStyle={{
                           backgroundColor: 'hsl(var(--card))',
@@ -316,11 +315,7 @@ export function ImoveisTab({ imoveis, calculatedImoveis, onAdd, onUpdate, onRemo
                         formatter={(value: number) => formatCurrency(value)}
                       />
                       <Legend />
-                      <Bar dataKey="Renda" fill="hsl(var(--primary))" />
-                      <Bar dataKey="Imposto" fill="hsl(var(--destructive))" />
-                      <Bar dataKey="Despesas" fill="hsl(var(--warning))" />
-                      <Bar dataKey="Líquido" fill="hsl(var(--success))" />
-                    </BarChart>
+                    </PieChart>
                   </ResponsiveContainer>
                 </div>
               </div>
