@@ -49,7 +49,7 @@ export function LoginArea({ currentUser, onLogin, onLogout, imoveis, despesas, i
 
     setIsSaving(true);
     try {
-      const response = await fetch('http://localhost:3001/api/save', {
+      const response = await fetch('/api/save.php', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -72,7 +72,7 @@ export function LoginArea({ currentUser, onLogin, onLogout, imoveis, despesas, i
       toast.success('Dados guardados no disco local com sucesso!');
     } catch (error: any) {
       console.error('Erro ao guardar:', error);
-      toast.error('Erro ao guardar: Certifique-se que o servidor está a correr (node server.js)');
+      toast.error('Erro ao guardar: Verifique se a pasta api/ está acessível no servidor');
     } finally {
       setIsSaving(false);
     }
@@ -86,7 +86,7 @@ export function LoginArea({ currentUser, onLogin, onLogout, imoveis, despesas, i
 
     setIsLoading(true);
     try {
-      const response = await fetch(`http://localhost:3001/api/load/${currentUser}`);
+      const response = await fetch(`/api/load.php?username=${currentUser}`);
 
       if (!response.ok) {
         const error = await response.json();
@@ -100,7 +100,7 @@ export function LoginArea({ currentUser, onLogin, onLogout, imoveis, despesas, i
       }
     } catch (error: any) {
       console.error('Erro ao carregar:', error);
-      toast.error('Erro ao carregar: Certifique-se que o servidor está a correr (node server.js)');
+      toast.error('Erro ao carregar: Verifique se a pasta api/ está acessível no servidor');
     } finally {
       setIsLoading(false);
     }
