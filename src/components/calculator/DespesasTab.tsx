@@ -82,6 +82,7 @@ export function DespesasTab({ despesas, onAdd, onRemove }: DespesasTabProps) {
                 className="input-field"
                 placeholder="100"
                 min="0"
+                step="0.01"
                 value={valorMensal}
                 onChange={(e) => setValorMensal(e.target.value)}
               />
@@ -98,6 +99,7 @@ export function DespesasTab({ despesas, onAdd, onRemove }: DespesasTabProps) {
                 className="input-field"
                 placeholder="1200"
                 min="0"
+                step="0.01"
                 value={valorAnual}
                 onChange={(e) => setValorAnual(e.target.value)}
               />

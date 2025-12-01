@@ -78,6 +78,7 @@ export function InvestimentosTab({ investimentos, onAdd, onRemove }: Investiment
               className="input-field mt-1"
               placeholder="10000"
               min="0"
+              step="0.01"
               value={valor}
               onChange={(e) => setValor(e.target.value)}
             />
@@ -102,6 +103,7 @@ export function InvestimentosTab({ investimentos, onAdd, onRemove }: Investiment
               placeholder="28"
               min="0"
               max="100"
+              step="0.01"
               value={imposto}
               onChange={(e) => setImposto(e.target.value)}
             />
