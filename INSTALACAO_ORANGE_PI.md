@@ -60,11 +60,11 @@ npm run build
 
 ```bash
 # Criar directório (se estiver em subpasta)
-sudo mkdir -p /var/www/html/renda-passiva-calc
+sudo mkdir -p /var/www/html/imo/renda-passiva-calc
 
 # Dar permissões
-sudo chown -R www-data:www-data /var/www/html/renda-passiva-calc
-sudo chmod -R 755 /var/www/html/renda-passiva-calc
+sudo chown -R www-data:www-data /var/www/html/imo/renda-passiva-calc
+sudo chmod -R 755 /var/www/html/imo/renda-passiva-calc
 ```
 
 ## Passo 6: Copiar Ficheiros
@@ -73,13 +73,16 @@ sudo chmod -R 755 /var/www/html/renda-passiva-calc
 
 ```bash
 # Copiar conteúdo da pasta dist/
-scp -r dist/* usuario@ip-orange-pi:/var/www/html/renda-passiva-calc/
+scp -r dist/* usuario@ip-orange-pi:/tmp/renda-passiva-calc/
 
 # Copiar .htaccess
-scp .htaccess usuario@ip-orange-pi:/var/www/html/renda-passiva-calc/
+scp .htaccess usuario@ip-orange-pi:/tmp/renda-passiva-calc/
 
 # Copiar pasta api/
-scp -r api/ usuario@ip-orange-pi:/var/www/html/renda-passiva-calc/
+scp -r api/ usuario@ip-orange-pi:/tmp/renda-passiva-calc/
+
+# No Orange Pi, mover para pasta final:
+sudo mv /tmp/renda-passiva-calc/* /var/www/html/imo/renda-passiva-calc/
 ```
 
 ### Opção B: Via USB/Manual
@@ -91,24 +94,25 @@ scp -r api/ usuario@ip-orange-pi:/var/www/html/renda-passiva-calc/
 
 2. No Orange Pi:
 ```bash
-sudo cp -r /caminho/usb/* /var/www/html/renda-passiva-calc/
+sudo cp -r /caminho/usb/* /var/www/html/imo/renda-passiva-calc/
 ```
 
 ## Passo 7: Ajustar Permissões Finais
 
 ```bash
 # No Orange Pi
-sudo chown -R www-data:www-data /var/www/html/renda-passiva-calc
-sudo chmod -R 755 /var/www/html/renda-passiva-calc
-sudo mkdir -p /var/www/html/renda-passiva-calc/save
-sudo chmod 777 /var/www/html/renda-passiva-calc/save
+sudo chown -R www-data:www-data /var/www/html/imo/renda-passiva-calc
+sudo chmod -R 755 /var/www/html/imo/renda-passiva-calc
+sudo mkdir -p /var/www/html/imo/renda-passiva-calc/save
+sudo chmod 777 /var/www/html/imo/renda-passiva-calc/save
 ```
 
 ## Passo 8: Testar
 
 Aceder no browser:
-- Se na raiz: `http://ip-do-orange-pi/`
-- Se em subpasta: `http://ip-do-orange-pi/renda-passiva-calc/`
+```
+https://househunter.pt/imo/renda-passiva-calc/
+```
 
 ## Troubleshooting
 
@@ -137,17 +141,47 @@ sudo grep -r "AllowOverride" /etc/apache2/
 
 Deve ter `AllowOverride All` para o directório.
 
+### Verificar se ficheiros foram copiados corretamente
+
+```bash
+ls -la /var/www/html/imo/renda-passiva-calc/
+```
+
+Deve ver:
+- index.html
+- .htaccess
+- pasta assets/
+- pasta api/
+- pasta save/ (será criada ao guardar dados)
+
 ## Notas Importantes
 
-1. **Subpasta vs Raiz**: Se colocar numa subpasta diferente de `/`, precisa:
-   - Editar `vite.config.ts` → `base: '/nome-da-pasta/'`
-   - Editar `.htaccess` → `RewriteBase /nome-da-pasta/`
-   - Fazer build novamente
+1. **NUNCA** executar `npm install` ou `npm run build` no Orange Pi Zero 2 - vai encravar!
 
-2. **Firewall**: Se não conseguir aceder, verificar firewall:
+2. **Workflow correto**:
+   - Build no computador local: `npm run build`
+   - Copiar apenas dist/, .htaccess e api/ para o servidor
+   - Não copiar node_modules, package.json, src/, etc.
+
+3. **Firewall**: Se não conseguir aceder, verificar firewall:
 ```bash
 sudo ufw allow 80
 sudo ufw allow 443
 ```
 
-3. **IP Estático**: Considere dar IP fixo ao Orange Pi para facilitar acesso.
+4. **IP Estático**: Considere dar IP fixo ao Orange Pi para facilitar acesso.
+
+## Estrutura Final no Servidor
+
+```
+/var/www/html/imo/renda-passiva-calc/
+├── index.html
+├── .htaccess
+├── assets/
+│   └── (ficheiros JS e CSS compilados)
+├── api/
+│   ├── save.php
+│   └── load.php
+└── save/
+    └── (ficheiros JSON dos utilizadores)
+```
