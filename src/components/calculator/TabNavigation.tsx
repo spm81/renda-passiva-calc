@@ -8,8 +8,8 @@ interface TabNavigationProps {
 
 const tabs: { id: TabType; label: string; icon: React.ReactNode }[] = [
   { id: 'imoveis', label: 'Imóveis', icon: <Building2 className="w-4 h-4" /> },
-  { id: 'despesas', label: 'Despesas', icon: <Receipt className="w-4 h-4" /> },
   { id: 'investimentos', label: 'Investimentos', icon: <TrendingUp className="w-4 h-4" /> },
+  { id: 'despesas', label: 'Despesas', icon: <Receipt className="w-4 h-4" /> },
   { id: 'resultados', label: 'Resultados', icon: <BarChart3 className="w-4 h-4" /> },
 ];
 
