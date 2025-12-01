@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Imovel, CalculatedImovel } from '@/types/calculator';
-import { Plus, Trash2, Building2 } from 'lucide-react';
+import { Plus, Trash2, Building2, LayoutGrid, List } from 'lucide-react';
 import { formatCurrency } from '@/lib/format';
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
@@ -34,6 +34,7 @@ const defaultFormData: ImovelFormData = {
 
 export function ImoveisTab({ imoveis, calculatedImoveis, onAdd, onUpdate, onRemove }: ImoveisTabProps) {
   const [formData, setFormData] = useState<ImovelFormData>(defaultFormData);
+  const [viewMode, setViewMode] = useState<'normal' | 'compact'>('normal');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -166,10 +167,38 @@ export function ImoveisTab({ imoveis, calculatedImoveis, onAdd, onUpdate, onRemo
 
       {/* Imoveis List */}
       <div className="card-elevated p-5">
-        <h3 className="section-title flex items-center gap-2">
-          <Building2 className="w-5 h-5 text-primary" />
-          Meus Imóveis ({imoveis.length})
-        </h3>
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="section-title flex items-center gap-2">
+            <Building2 className="w-5 h-5 text-primary" />
+            Meus Imóveis ({imoveis.length})
+          </h3>
+          {imoveis.length > 0 && (
+            <div className="flex gap-2">
+              <button
+                onClick={() => setViewMode('normal')}
+                className={`p-2 rounded-lg transition-colors ${
+                  viewMode === 'normal'
+                    ? 'bg-primary text-primary-foreground'
+                    : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                }`}
+                title="Visualização Normal"
+              >
+                <LayoutGrid className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => setViewMode('compact')}
+                className={`p-2 rounded-lg transition-colors ${
+                  viewMode === 'compact'
+                    ? 'bg-primary text-primary-foreground'
+                    : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                }`}
+                title="Visualização Compacta"
+              >
+                <List className="w-4 h-4" />
+              </button>
+            </div>
+          )}
+        </div>
 
         {imoveis.length === 0 ? (
           <div className="text-center py-12 text-muted-foreground">
@@ -177,7 +206,7 @@ export function ImoveisTab({ imoveis, calculatedImoveis, onAdd, onUpdate, onRemo
             <p>Nenhum imóvel adicionado.</p>
             <p className="text-sm">Adicione o seu primeiro imóvel acima.</p>
           </div>
-        ) : (
+        ) : viewMode === 'normal' ? (
           <div className="grid gap-4">
             {calculatedImoveis.map((imovel) => (
               <div key={imovel.id} className="property-card">
@@ -327,6 +356,161 @@ export function ImoveisTab({ imoveis, calculatedImoveis, onAdd, onUpdate, onRemo
                       <Legend />
                     </PieChart>
                   </ResponsiveContainer>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="grid gap-3">
+            {calculatedImoveis.map((imovel) => (
+              <div key={imovel.id} className="property-card p-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {/* Inputs e Botão Remover */}
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    <div>
+                      <label className="text-xs font-medium text-muted-foreground">Nome</label>
+                      <input
+                        type="text"
+                        className="input-field mt-0.5 text-sm h-8"
+                        value={imovel.nome}
+                        onChange={(e) => handleFieldChange(imovel.id, 'nome', e.target.value)}
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium text-muted-foreground">Valor (€)</label>
+                      <input
+                        type="number"
+                        className="input-field mt-0.5 text-sm h-8"
+                        step="0.01"
+                        value={imovel.valor}
+                        onChange={(e) => handleFieldChange(imovel.id, 'valor', e.target.value)}
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium text-muted-foreground">Renda (€)</label>
+                      <input
+                        type="number"
+                        className="input-field mt-0.5 text-sm h-8"
+                        step="0.01"
+                        value={imovel.renda}
+                        onChange={(e) => handleFieldChange(imovel.id, 'renda', e.target.value)}
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium text-muted-foreground">IR (%)</label>
+                      <input
+                        type="number"
+                        className="input-field mt-0.5 text-sm h-8"
+                        step="0.01"
+                        value={imovel.irPercent}
+                        onChange={(e) => handleFieldChange(imovel.id, 'irPercent', e.target.value)}
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium text-muted-foreground">IMI (€)</label>
+                      <input
+                        type="number"
+                        className="input-field mt-0.5 text-sm h-8"
+                        step="0.01"
+                        value={imovel.imi}
+                        onChange={(e) => handleFieldChange(imovel.id, 'imi', e.target.value)}
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium text-muted-foreground">Cond. (€)</label>
+                      <input
+                        type="number"
+                        className="input-field mt-0.5 text-sm h-8"
+                        step="0.01"
+                        value={imovel.condominio}
+                        onChange={(e) => handleFieldChange(imovel.id, 'condominio', e.target.value)}
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium text-muted-foreground">Seguro (€)</label>
+                      <input
+                        type="number"
+                        className="input-field mt-0.5 text-sm h-8"
+                        step="0.01"
+                        value={imovel.seguro}
+                        onChange={(e) => handleFieldChange(imovel.id, 'seguro', e.target.value)}
+                      />
+                    </div>
+                    <div className="flex items-end">
+                      <button
+                        onClick={() => onRemove(imovel.id)}
+                        className="btn-danger h-8 w-full flex items-center justify-center gap-1 text-xs"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                        Remover
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Stats e Gráfico lado a lado */}
+                  <div className="flex gap-3">
+                    {/* Stats compactas */}
+                    <div className="grid grid-cols-2 gap-2 flex-1">
+                      <div className="bg-muted/50 rounded p-2">
+                        <p className="text-[10px] text-muted-foreground">Renda</p>
+                        <p className="text-sm font-semibold">{formatCurrency(imovel.renda)}</p>
+                        <p className="text-[10px] text-muted-foreground">{formatCurrency(imovel.rendaAnual)}/ano</p>
+                      </div>
+                      <div className="bg-muted/50 rounded p-2">
+                        <p className="text-[10px] text-muted-foreground">Imposto</p>
+                        <p className="text-sm font-semibold text-destructive">-{formatCurrency(imovel.irValor)}</p>
+                        <p className="text-[10px] text-muted-foreground">-{formatCurrency(imovel.impostoAnual)}/ano</p>
+                      </div>
+                      <div className="bg-muted/50 rounded p-2">
+                        <p className="text-[10px] text-muted-foreground">Despesas</p>
+                        <p className="text-sm font-semibold text-destructive">-{formatCurrency(imovel.despesasMensais)}</p>
+                        <p className="text-[10px] text-muted-foreground">-{formatCurrency(imovel.despesasAnuais)}/ano</p>
+                      </div>
+                      <div className="bg-muted/50 rounded p-2">
+                        <p className="text-[10px] text-muted-foreground">Líquido</p>
+                        <p className="text-sm font-semibold text-success">{formatCurrency(imovel.rendaLiquida)}</p>
+                        <p className="text-[10px] text-muted-foreground">{formatCurrency(imovel.rendaLiquidaAnual)}/ano</p>
+                      </div>
+                      <div className="bg-muted/50 rounded p-2 col-span-2">
+                        <p className="text-[10px] text-muted-foreground">Líquido após Despesas</p>
+                        <p className="text-sm font-semibold text-success">{formatCurrency(imovel.rendaLiquidaAposDespesas)}</p>
+                        <p className="text-[10px] text-muted-foreground">{formatCurrency(imovel.rendaLiquidaAnualAposDespesas)}/ano</p>
+                      </div>
+                    </div>
+
+                    {/* Gráfico compacto */}
+                    <div className="h-40 w-40 flex-shrink-0">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <PieChart>
+                          <Pie
+                            data={[
+                              { name: 'Imposto', value: imovel.irValor },
+                              { name: 'Despesas', value: imovel.despesasMensais },
+                              { name: 'Líquido', value: imovel.rendaLiquidaAposDespesas },
+                            ]}
+                            cx="50%"
+                            cy="50%"
+                            labelLine={false}
+                            outerRadius={50}
+                            fill="#8884d8"
+                            dataKey="value"
+                          >
+                            <Cell fill="hsl(var(--destructive))" />
+                            <Cell fill="hsl(var(--warning))" />
+                            <Cell fill="hsl(var(--success))" />
+                          </Pie>
+                          <Tooltip
+                            contentStyle={{
+                              backgroundColor: 'hsl(var(--card))',
+                              border: '1px solid hsl(var(--border))',
+                              borderRadius: '8px',
+                            }}
+                            formatter={(value: number) => formatCurrency(value)}
+                          />
+                        </PieChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </div>
                 </div>
               </div>
             ))}
