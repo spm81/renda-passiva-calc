@@ -88,6 +88,7 @@ export function ImoveisTab({ imoveis, calculatedImoveis, onAdd, onUpdate, onRemo
                 className="input-field mt-1"
                 placeholder="150000"
                 min="0"
+                step="0.01"
                 value={formData.valor}
                 onChange={(e) => setFormData({ ...formData, valor: e.target.value })}
               />
@@ -99,6 +100,7 @@ export function ImoveisTab({ imoveis, calculatedImoveis, onAdd, onUpdate, onRemo
                 className="input-field mt-1"
                 placeholder="750"
                 min="0"
+                step="0.01"
                 value={formData.renda}
                 onChange={(e) => setFormData({ ...formData, renda: e.target.value })}
               />
@@ -111,6 +113,7 @@ export function ImoveisTab({ imoveis, calculatedImoveis, onAdd, onUpdate, onRemo
                 placeholder="25"
                 min="0"
                 max="100"
+                step="0.01"
                 value={formData.irPercent}
                 onChange={(e) => setFormData({ ...formData, irPercent: e.target.value })}
               />
@@ -122,6 +125,7 @@ export function ImoveisTab({ imoveis, calculatedImoveis, onAdd, onUpdate, onRemo
                 className="input-field mt-1"
                 placeholder="300"
                 min="0"
+                step="0.01"
                 value={formData.imi}
                 onChange={(e) => setFormData({ ...formData, imi: e.target.value })}
               />
@@ -133,6 +137,7 @@ export function ImoveisTab({ imoveis, calculatedImoveis, onAdd, onUpdate, onRemo
                 className="input-field mt-1"
                 placeholder="50"
                 min="0"
+                step="0.01"
                 value={formData.condominio}
                 onChange={(e) => setFormData({ ...formData, condominio: e.target.value })}
               />
@@ -144,6 +149,7 @@ export function ImoveisTab({ imoveis, calculatedImoveis, onAdd, onUpdate, onRemo
                 className="input-field mt-1"
                 placeholder="20"
                 min="0"
+                step="0.01"
                 value={formData.seguro}
                 onChange={(e) => setFormData({ ...formData, seguro: e.target.value })}
               />
@@ -190,6 +196,7 @@ export function ImoveisTab({ imoveis, calculatedImoveis, onAdd, onUpdate, onRemo
                     <input
                       type="number"
                       className="input-field mt-1"
+                      step="0.01"
                       value={imovel.valor}
                       onChange={(e) => handleFieldChange(imovel.id, 'valor', e.target.value)}
                     />
@@ -199,6 +206,7 @@ export function ImoveisTab({ imoveis, calculatedImoveis, onAdd, onUpdate, onRemo
                     <input
                       type="number"
                       className="input-field mt-1"
+                      step="0.01"
                       value={imovel.renda}
                       onChange={(e) => handleFieldChange(imovel.id, 'renda', e.target.value)}
                     />
@@ -208,6 +216,7 @@ export function ImoveisTab({ imoveis, calculatedImoveis, onAdd, onUpdate, onRemo
                     <input
                       type="number"
                       className="input-field mt-1"
+                      step="0.01"
                       value={imovel.irPercent}
                       onChange={(e) => handleFieldChange(imovel.id, 'irPercent', e.target.value)}
                     />
@@ -217,6 +226,7 @@ export function ImoveisTab({ imoveis, calculatedImoveis, onAdd, onUpdate, onRemo
                     <input
                       type="number"
                       className="input-field mt-1"
+                      step="0.01"
                       value={imovel.imi}
                       onChange={(e) => handleFieldChange(imovel.id, 'imi', e.target.value)}
                     />
@@ -226,6 +236,7 @@ export function ImoveisTab({ imoveis, calculatedImoveis, onAdd, onUpdate, onRemo
                     <input
                       type="number"
                       className="input-field mt-1"
+                      step="0.01"
                       value={imovel.condominio}
                       onChange={(e) => handleFieldChange(imovel.id, 'condominio', e.target.value)}
                     />
@@ -235,6 +246,7 @@ export function ImoveisTab({ imoveis, calculatedImoveis, onAdd, onUpdate, onRemo
                     <input
                       type="number"
                       className="input-field mt-1"
+                      step="0.01"
                       value={imovel.seguro}
                       onChange={(e) => handleFieldChange(imovel.id, 'seguro', e.target.value)}
                     />
