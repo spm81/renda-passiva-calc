@@ -8,5 +8,5 @@ Options -MultiViews
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
   RewriteCond %{REQUEST_FILENAME} !-l
-  RewriteRule . /index.html [L]
+  RewriteRule . /imo/renda-passiva-calc/index.html [L]
 </IfModule>
