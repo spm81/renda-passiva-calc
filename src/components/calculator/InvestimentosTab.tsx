@@ -1,30 +1,59 @@
 import { useState } from 'react';
 import { Investimento } from '@/types/calculator';
-import { Plus, Trash2, TrendingUp } from 'lucide-react';
+import { Plus, Trash2, TrendingUp, Pencil } from 'lucide-react';
 import { formatCurrency, formatPercent } from '@/lib/format';
 
 interface InvestimentosTabProps {
   investimentos: Investimento[];
   onAdd: (investimento: Omit<Investimento, 'id'>) => void;
+  onUpdate: (id: string, updates: Partial<Investimento>) => void;
   onRemove: (id: string) => void;
 }
 
-export function InvestimentosTab({ investimentos, onAdd, onRemove }: InvestimentosTabProps) {
+export function InvestimentosTab({ investimentos, onAdd, onUpdate, onRemove }: InvestimentosTabProps) {
   const [nome, setNome] = useState('');
   const [valor, setValor] = useState('');
   const [rendimento, setRendimento] = useState('');
   const [imposto, setImposto] = useState('28');
+  const [editingId, setEditingId] = useState<string | null>(null);
 
   const handleAdd = () => {
     if (!nome.trim() || !valor) return;
 
-    onAdd({
-      nome: nome.trim(),
-      valor: parseFloat(valor) || 0,
-      rendimentoBruto: parseFloat(rendimento) || 0,
-      impostoPercent: parseFloat(imposto) || 28,
-    });
+    if (editingId) {
+      onUpdate(editingId, {
+        nome: nome.trim(),
+        valor: parseFloat(valor) || 0,
+        rendimentoBruto: parseFloat(rendimento) || 0,
+        impostoPercent: parseFloat(imposto) || 28,
+      });
+      setEditingId(null);
+    } else {
+      onAdd({
+        nome: nome.trim(),
+        valor: parseFloat(valor) || 0,
+        rendimentoBruto: parseFloat(rendimento) || 0,
+        impostoPercent: parseFloat(imposto) || 28,
+      });
+    }
 
+    setNome('');
+    setValor('');
+    setRendimento('');
+    setImposto('28');
+  };
+
+  const handleEdit = (inv: Investimento) => {
+    setEditingId(inv.id);
+    setNome(inv.nome);
+    setValor(inv.valor.toString());
+    setRendimento(inv.rendimentoBruto.toString());
+    setImposto(inv.impostoPercent.toString());
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleCancelEdit = () => {
+    setEditingId(null);
     setNome('');
     setValor('');
     setRendimento('');
@@ -57,8 +86,8 @@ export function InvestimentosTab({ investimentos, onAdd, onRemove }: Investiment
       {/* Add Form */}
       <div className="card-elevated p-5 mb-6">
         <h3 className="section-title flex items-center gap-2">
-          <Plus className="w-5 h-5 text-primary" />
-          Adicionar Investimento
+          {editingId ? <Pencil className="w-5 h-5 text-primary" /> : <Plus className="w-5 h-5 text-primary" />}
+          {editingId ? 'Editar Investimento' : 'Adicionar Investimento'}
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
           <div className="lg:col-span-2">
@@ -109,11 +138,16 @@ export function InvestimentosTab({ investimentos, onAdd, onRemove }: Investiment
             />
           </div>
         </div>
-        <div className="mt-4">
+        <div className="mt-4 flex gap-2">
           <button onClick={handleAdd} className="btn-primary flex items-center gap-2">
-            <Plus className="w-4 h-4" />
-            Adicionar Investimento
+            {editingId ? <Pencil className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+            {editingId ? 'Atualizar Investimento' : 'Adicionar Investimento'}
           </button>
+          {editingId && (
+            <button onClick={handleCancelEdit} className="btn-secondary">
+              Cancelar
+            </button>
+          )}
         </div>
       </div>
 
@@ -143,9 +177,14 @@ export function InvestimentosTab({ investimentos, onAdd, onRemove }: Investiment
                         Capital: {formatCurrency(inv.valor)} • Rendimento: {formatPercent(inv.rendimentoBruto)} • Imposto: {formatPercent(inv.impostoPercent)}
                       </p>
                     </div>
-                    <button onClick={() => onRemove(inv.id)} className="btn-danger">
-                      <Trash2 className="w-4 h-4" />
-                    </button>
+                    <div className="flex gap-2">
+                      <button onClick={() => handleEdit(inv)} className="btn-secondary">
+                        <Pencil className="w-4 h-4" />
+                      </button>
+                      <button onClick={() => onRemove(inv.id)} className="btn-danger">
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
                   </div>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                     <div className="bg-background/50 rounded-lg p-3">

@@ -2,6 +2,16 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { LogIn, LogOut, User, Save, Download } from 'lucide-react';
 import { toast } from 'sonner';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 
 interface LoginAreaProps {
@@ -18,6 +28,8 @@ export function LoginArea({ currentUser, onLogin, onLogout, imoveis, despesas, i
   const [username, setUsername] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [showSaveConfirm, setShowSaveConfirm] = useState(false);
+  const [showLoadConfirm, setShowLoadConfirm] = useState(false);
 
   const handleLogin = () => {
     const trimmed = username.trim();
@@ -41,12 +53,16 @@ export function LoginArea({ currentUser, onLogin, onLogout, imoveis, despesas, i
     }
   };
 
-  const handleSaveToServer = async () => {
+  const confirmSave = () => {
     if (!currentUser) {
       toast.error('Faça login primeiro!');
       return;
     }
+    setShowSaveConfirm(true);
+  };
 
+  const handleSaveToServer = async () => {
+    setShowSaveConfirm(false);
     setIsSaving(true);
     try {
       const response = await fetch('/api/save.php', {
@@ -78,12 +94,16 @@ export function LoginArea({ currentUser, onLogin, onLogout, imoveis, despesas, i
     }
   };
 
-  const handleLoadFromServer = async () => {
+  const confirmLoad = () => {
     if (!currentUser) {
       toast.error('Faça login primeiro!');
       return;
     }
+    setShowLoadConfirm(true);
+  };
 
+  const handleLoadFromServer = async () => {
+    setShowLoadConfirm(false);
     setIsLoading(true);
     try {
       const response = await fetch(`/api/load.php?username=${currentUser}`);
@@ -107,7 +127,8 @@ export function LoginArea({ currentUser, onLogin, onLogout, imoveis, despesas, i
   };
 
   return (
-    <div className="flex flex-wrap items-center justify-center gap-3 p-4 bg-secondary/50 rounded-xl mb-6">
+    <>
+      <div className="flex flex-wrap items-center justify-center gap-3 p-4 bg-secondary/50 rounded-xl mb-6">
       {currentUser ? (
         <>
           <div className="flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-lg">
@@ -115,7 +136,7 @@ export function LoginArea({ currentUser, onLogin, onLogout, imoveis, despesas, i
             <span className="font-medium text-foreground">{currentUser}</span>
           </div>
           <Button
-            onClick={handleSaveToServer}
+            onClick={confirmSave}
             variant="default"
             size="sm"
             className="gap-2"
@@ -125,7 +146,7 @@ export function LoginArea({ currentUser, onLogin, onLogout, imoveis, despesas, i
             {isSaving ? 'A guardar...' : 'Guardar no Servidor'}
           </Button>
           <Button
-            onClick={handleLoadFromServer}
+            onClick={confirmLoad}
             variant="outline"
             size="sm"
             className="gap-2"
@@ -164,6 +185,39 @@ export function LoginArea({ currentUser, onLogin, onLogout, imoveis, despesas, i
           </button>
         </>
       )}
-    </div>
+      </div>
+
+      {/* Save Confirmation Dialog */}
+      <AlertDialog open={showSaveConfirm} onOpenChange={setShowSaveConfirm}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmar Guardar</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tem a certeza que quer guardar os dados atuais no servidor? Isto irá sobrescrever os dados existentes.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={handleSaveToServer}>Guardar</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Load Confirmation Dialog */}
+      <AlertDialog open={showLoadConfirm} onOpenChange={setShowLoadConfirm}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmar Carregar</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tem a certeza que quer carregar os dados do servidor? Isto irá substituir todos os dados atuais.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={handleLoadFromServer}>Carregar</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 }

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Imovel, CalculatedImovel } from '@/types/calculator';
-import { Plus, Trash2, Building2, LayoutGrid, List } from 'lucide-react';
+import { Plus, Trash2, Building2, LayoutGrid, List, AlignLeft } from 'lucide-react';
 import { formatCurrency } from '@/lib/format';
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
@@ -34,7 +34,7 @@ const defaultFormData: ImovelFormData = {
 
 export function ImoveisTab({ imoveis, calculatedImoveis, onAdd, onUpdate, onRemove }: ImoveisTabProps) {
   const [formData, setFormData] = useState<ImovelFormData>(defaultFormData);
-  const [viewMode, setViewMode] = useState<'normal' | 'compact'>('normal');
+  const [viewMode, setViewMode] = useState<'normal' | 'compact' | 'list'>('normal');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -195,6 +195,17 @@ export function ImoveisTab({ imoveis, calculatedImoveis, onAdd, onUpdate, onRemo
                 title="Visualização Compacta"
               >
                 <List className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => setViewMode('list')}
+                className={`p-2 rounded-lg transition-colors ${
+                  viewMode === 'list'
+                    ? 'bg-primary text-primary-foreground'
+                    : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                }`}
+                title="Visualização Lista"
+              >
+                <AlignLeft className="w-4 h-4" />
               </button>
             </div>
           )}
@@ -360,7 +371,7 @@ export function ImoveisTab({ imoveis, calculatedImoveis, onAdd, onUpdate, onRemo
               </div>
             ))}
           </div>
-        ) : (
+        ) : viewMode === 'compact' ? (
           <div className="grid gap-3">
             {calculatedImoveis.map((imovel) => (
               <div key={imovel.id} className="property-card p-3">
@@ -509,6 +520,78 @@ export function ImoveisTab({ imoveis, calculatedImoveis, onAdd, onUpdate, onRemo
                           />
                         </PieChart>
                       </ResponsiveContainer>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="grid gap-4">
+            {calculatedImoveis.map((imovel) => (
+              <div key={imovel.id} className="property-card">
+                <div className="flex justify-between items-start mb-4">
+                  <h4 className="font-semibold text-lg">{imovel.nome}</h4>
+                  <button
+                    onClick={() => onRemove(imovel.id)}
+                    className="btn-danger"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2 text-sm">
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Renda de aluguer:</span>
+                      <span className="font-semibold">{formatCurrency(imovel.renda)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Imposto de Renda:</span>
+                      <span className="font-semibold text-destructive">{formatCurrency(imovel.irValor)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">IMI Mensal:</span>
+                      <span className="font-semibold">{formatCurrency(imovel.imiMensal)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Despesas Mensais:</span>
+                      <span className="font-semibold">{formatCurrency(imovel.despesasMensais)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Renda líquida:</span>
+                      <span className="font-semibold text-success">{formatCurrency(imovel.rendaLiquida)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Renda líquida após despesas:</span>
+                      <span className="font-semibold text-success">{formatCurrency(imovel.rendaLiquidaAposDespesas)}</span>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Renda anual:</span>
+                      <span className="font-semibold">{formatCurrency(imovel.rendaAnual)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Imposto anual:</span>
+                      <span className="font-semibold text-destructive">{formatCurrency(imovel.impostoAnual)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">IMI Anual:</span>
+                      <span className="font-semibold">{formatCurrency(imovel.imi)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Despesas anuais:</span>
+                      <span className="font-semibold">{formatCurrency(imovel.despesasAnuais)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Renda líquida anual:</span>
+                      <span className="font-semibold text-success">{formatCurrency(imovel.rendaLiquidaAnual)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Renda líquida anual após despesas:</span>
+                      <span className="font-semibold text-success">{formatCurrency(imovel.rendaLiquidaAnualAposDespesas)}</span>
                     </div>
                   </div>
                 </div>
