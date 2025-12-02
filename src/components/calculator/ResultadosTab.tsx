@@ -2,6 +2,7 @@ import { Resultados } from '@/types/calculator';
 import { StatCard } from './StatCard';
 import { formatCurrency } from '@/lib/format';
 import { 
+  Briefcase,
   Wallet, 
   Receipt, 
   Percent, 
@@ -26,6 +27,11 @@ interface ResultadosTabProps {
 
 export function ResultadosTab({ resultados }: ResultadosTabProps) {
   const chartData = [
+    {
+      name: 'Capital Humano',
+      mensal: resultados.capitalHumanoMensal,
+      anual: resultados.capitalHumanoAnual,
+    },
     {
       name: 'Rendas',
       mensal: resultados.totalRendaMensal,
@@ -60,6 +66,25 @@ export function ResultadosTab({ resultados }: ResultadosTabProps) {
 
   return (
     <div className="animate-fade-in space-y-6">
+      {/* Capital Humano Section */}
+      {resultados.capitalHumanoMensal > 0 && (
+        <div className="card-elevated p-5">
+          <h3 className="section-title flex items-center gap-2">
+            <Briefcase className="w-5 h-5 text-primary" />
+            Capital Humano
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <StatCard
+              label="Rendimento Mensal"
+              value={formatCurrency(resultados.capitalHumanoMensal)}
+              subValue={`${formatCurrency(resultados.capitalHumanoAnual)}/ano`}
+              icon={<Wallet className="w-5 h-5" />}
+              variant="success"
+            />
+          </div>
+        </div>
+      )}
+
       {/* Summary Section */}
       <div className="card-elevated p-5">
         <h3 className="section-title flex items-center gap-2">
@@ -108,9 +133,15 @@ export function ResultadosTab({ resultados }: ResultadosTabProps) {
       <div className="card-elevated p-5">
         <h3 className="section-title flex items-center gap-2">
           <PiggyBank className="w-5 h-5 text-primary" />
-          Renda Final (Imóveis + Investimentos - Despesas Extras)
+          Renda Final (Capital Humano + Imóveis + Investimentos - Despesas Extras)
         </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+          <StatCard
+            label="Capital Humano"
+            value={formatCurrency(resultados.capitalHumanoMensal)}
+            subValue={`${formatCurrency(resultados.capitalHumanoAnual)}/ano`}
+            variant="success"
+          />
           <StatCard
             label="Renda Imóveis"
             value={formatCurrency(resultados.rendaLiquidaAposDespesasMensal)}

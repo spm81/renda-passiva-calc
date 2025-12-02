@@ -25,6 +25,12 @@ export interface Investimento {
   impostoPercent: number;
 }
 
+export interface CapitalHumano {
+  id: string;
+  nome: string;
+  rendimentoLiquido: number;
+}
+
 export interface CalculatedImovel extends Imovel {
   irValor: number;
   imiMensal: number;
@@ -39,6 +45,8 @@ export interface CalculatedImovel extends Imovel {
 }
 
 export interface Resultados {
+  capitalHumanoMensal: number;
+  capitalHumanoAnual: number;
   totalRendaMensal: number;
   totalImpostoMensal: number;
   totalDespesasMensal: number;
@@ -59,4 +67,4 @@ export interface Resultados {
   rendaComInvestimentosAnual: number;
 }
 
-export type TabType = 'imoveis' | 'despesas' | 'investimentos' | 'resultados';
+export type TabType = 'capital-humano' | 'imoveis' | 'despesas' | 'investimentos' | 'resultados';
