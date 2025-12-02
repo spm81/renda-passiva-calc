@@ -28,6 +28,7 @@ const Index = () => {
     addDespesa,
     removeDespesa,
     addInvestimento,
+    updateInvestimento,
     removeInvestimento,
     clearAllData,
   } = useCalculator(currentUser);
@@ -145,6 +146,7 @@ const Index = () => {
           <InvestimentosTab
             investimentos={investimentos}
             onAdd={addInvestimento}
+            onUpdate={updateInvestimento}
             onRemove={removeInvestimento}
           />
         )}
