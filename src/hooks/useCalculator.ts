@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { Imovel, DespesaExtra, Investimento, CalculatedImovel, Resultados } from '@/types/calculator';
+import { Imovel, DespesaExtra, Investimento, CapitalHumano, CalculatedImovel, Resultados } from '@/types/calculator';
 
 function generateId(): string {
   return Math.random().toString(36).substring(2, 9);
@@ -8,6 +8,7 @@ function generateId(): string {
 function getStorageKeys(username: string | null) {
   const prefix = username ? `calculadora_${username}_` : 'calculadora_';
   return {
+    capitalHumano: `${prefix}capitalHumano`,
     imoveis: `${prefix}imoveis`,
     despesas: `${prefix}despesas`,
     investimentos: `${prefix}investimentos`,
@@ -17,22 +18,31 @@ function getStorageKeys(username: string | null) {
 export function useCalculator(currentUser: string | null) {
   const storageKeys = useMemo(() => getStorageKeys(currentUser), [currentUser]);
 
+  const [capitalHumano, setCapitalHumano] = useState<CapitalHumano[]>([]);
   const [imoveis, setImoveis] = useState<Imovel[]>([]);
   const [despesas, setDespesas] = useState<DespesaExtra[]>([]);
   const [investimentos, setInvestimentos] = useState<Investimento[]>([]);
 
   // Load data when user changes
   useEffect(() => {
+    const savedCapitalHumano = localStorage.getItem(storageKeys.capitalHumano);
     const savedImoveis = localStorage.getItem(storageKeys.imoveis);
     const savedDespesas = localStorage.getItem(storageKeys.despesas);
     const savedInvestimentos = localStorage.getItem(storageKeys.investimentos);
 
+    setCapitalHumano(savedCapitalHumano ? JSON.parse(savedCapitalHumano) : []);
     setImoveis(savedImoveis ? JSON.parse(savedImoveis) : []);
     setDespesas(savedDespesas ? JSON.parse(savedDespesas) : []);
     setInvestimentos(savedInvestimentos ? JSON.parse(savedInvestimentos) : []);
   }, [storageKeys]);
 
   // Persist to localStorage
+  useEffect(() => {
+    if (currentUser) {
+      localStorage.setItem(storageKeys.capitalHumano, JSON.stringify(capitalHumano));
+    }
+  }, [capitalHumano, storageKeys, currentUser]);
+
   useEffect(() => {
     if (currentUser) {
       localStorage.setItem(storageKeys.imoveis, JSON.stringify(imoveis));
@@ -50,6 +60,15 @@ export function useCalculator(currentUser: string | null) {
       localStorage.setItem(storageKeys.investimentos, JSON.stringify(investimentos));
     }
   }, [investimentos, storageKeys, currentUser]);
+
+  // Capital Humano CRUD
+  const addCapitalHumano = useCallback((ch: Omit<CapitalHumano, 'id'>) => {
+    setCapitalHumano(prev => [...prev, { ...ch, id: generateId() }]);
+  }, []);
+
+  const removeCapitalHumano = useCallback((id: string) => {
+    setCapitalHumano(prev => prev.filter(ch => ch.id !== id));
+  }, []);
 
   // Imoveis CRUD
   const addImovel = useCallback((imovel: Omit<Imovel, 'id'>) => {
@@ -115,6 +134,10 @@ export function useCalculator(currentUser: string | null) {
 
   // Calculate totals
   const resultados = useMemo((): Resultados => {
+    // Capital Humano
+    const capitalHumanoMensal = capitalHumano.reduce((acc, ch) => acc + ch.rendimentoLiquido, 0);
+    const capitalHumanoAnual = capitalHumanoMensal * 12;
+
     let totalRendaMensal = 0;
     let totalImpostoMensal = 0;
     let totalDespesasMensal = 0;
@@ -149,6 +172,8 @@ export function useCalculator(currentUser: string | null) {
     });
 
     return {
+      capitalHumanoMensal,
+      capitalHumanoAnual,
       totalRendaMensal,
       totalImpostoMensal,
       totalDespesasMensal,
@@ -165,10 +190,10 @@ export function useCalculator(currentUser: string | null) {
       rendaFinalAnual,
       investimentosMensal,
       investimentosAnual,
-      rendaComInvestimentosMensal: rendaFinalMensal + investimentosMensal,
-      rendaComInvestimentosAnual: rendaFinalAnual + investimentosAnual,
+      rendaComInvestimentosMensal: capitalHumanoMensal + rendaFinalMensal + investimentosMensal,
+      rendaComInvestimentosAnual: capitalHumanoAnual + rendaFinalAnual + investimentosAnual,
     };
-  }, [imoveis, despesas, investimentos, calculateImovel]);
+  }, [capitalHumano, imoveis, despesas, investimentos, calculateImovel]);
 
   const calculatedImoveis = useMemo(
     () => imoveis.map(calculateImovel),
@@ -177,17 +202,21 @@ export function useCalculator(currentUser: string | null) {
 
   // Clear all data
   const clearAllData = useCallback(() => {
+    setCapitalHumano([]);
     setImoveis([]);
     setDespesas([]);
     setInvestimentos([]);
   }, []);
 
   return {
+    capitalHumano,
     imoveis,
     despesas,
     investimentos,
     calculatedImoveis,
     resultados,
+    addCapitalHumano,
+    removeCapitalHumano,
     addImovel,
     updateImovel,
     removeImovel,

@@ -18,13 +18,14 @@ interface LoginAreaProps {
   currentUser: string | null;
   onLogin: (username: string) => void;
   onLogout: () => void;
+  capitalHumano: any[];
   imoveis: any[];
   despesas: any[];
   investimentos: any[];
   onDataLoaded: (data: any) => void;
 }
 
-export function LoginArea({ currentUser, onLogin, onLogout, imoveis, despesas, investimentos, onDataLoaded }: LoginAreaProps) {
+export function LoginArea({ currentUser, onLogin, onLogout, capitalHumano, imoveis, despesas, investimentos, onDataLoaded }: LoginAreaProps) {
   const [username, setUsername] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -73,6 +74,7 @@ export function LoginArea({ currentUser, onLogin, onLogout, imoveis, despesas, i
         body: JSON.stringify({
           username: currentUser,
           data: {
+            capitalHumano,
             imoveis,
             despesasExtras: despesas,
             investimentos

@@ -3,6 +3,7 @@ import { TabType } from '@/types/calculator';
 import { useCalculator } from '@/hooks/useCalculator';
 import { TabNavigation } from '@/components/calculator/TabNavigation';
 import { LoginArea } from '@/components/calculator/LoginArea';
+import { CapitalHumanoTab } from '@/components/calculator/CapitalHumanoTab';
 import { ImoveisTab } from '@/components/calculator/ImoveisTab';
 import { DespesasTab } from '@/components/calculator/DespesasTab';
 import { InvestimentosTab } from '@/components/calculator/InvestimentosTab';
@@ -11,17 +12,20 @@ import { Building2, Calculator } from 'lucide-react';
 import { toast } from 'sonner';
 
 const Index = () => {
-  const [activeTab, setActiveTab] = useState<TabType>('imoveis');
+  const [activeTab, setActiveTab] = useState<TabType>('capital-humano');
   const [currentUser, setCurrentUser] = useState<string | null>(() => {
     return localStorage.getItem('calculadora_currentUser');
   });
   
   const {
+    capitalHumano,
     imoveis,
     despesas,
     investimentos,
     calculatedImoveis,
     resultados,
+    addCapitalHumano,
+    removeCapitalHumano,
     addImovel,
     updateImovel,
     removeImovel,
@@ -56,6 +60,11 @@ const Index = () => {
     clearAllData();
     
     // Load new data
+    if (data.capitalHumano) {
+      data.capitalHumano.forEach((ch: any) => {
+        addCapitalHumano(ch);
+      });
+    }
     if (data.imoveis) {
       data.imoveis.forEach((imovel: any) => {
         addImovel(imovel);
@@ -107,6 +116,7 @@ const Index = () => {
           currentUser={currentUser}
           onLogin={handleLogin}
           onLogout={handleLogout}
+          capitalHumano={capitalHumano}
           imoveis={imoveis}
           despesas={despesas}
           investimentos={investimentos}
@@ -123,6 +133,14 @@ const Index = () => {
         )}
 
         <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} />
+
+        {activeTab === 'capital-humano' && (
+          <CapitalHumanoTab
+            capitalHumano={capitalHumano}
+            onAdd={addCapitalHumano}
+            onRemove={removeCapitalHumano}
+          />
+        )}
 
         {activeTab === 'imoveis' && (
           <ImoveisTab
