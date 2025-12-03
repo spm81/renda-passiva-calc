@@ -23,6 +23,8 @@ export interface Investimento {
   valor: number;
   rendimentoBruto: number;
   impostoPercent: number;
+  tipoJuros: 'nominal' | 'composto';
+  diasCapitalizacao?: number; // dias entre cada capitalização (só para juros compostos)
 }
 
 export interface CapitalHumano {

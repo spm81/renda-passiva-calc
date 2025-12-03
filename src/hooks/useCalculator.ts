@@ -164,7 +164,17 @@ export function useCalculator(currentUser: string | null) {
     let investimentosAnual = 0;
 
     investimentos.forEach(inv => {
-      const brutoAnual = inv.valor * (inv.rendimentoBruto / 100);
+      let brutoAnual: number;
+      
+      if (inv.tipoJuros === 'composto' && inv.diasCapitalizacao) {
+        const taxaAnual = inv.rendimentoBruto / 100;
+        const periodosAno = 365 / inv.diasCapitalizacao;
+        const montanteFinal = inv.valor * Math.pow(1 + taxaAnual / periodosAno, periodosAno);
+        brutoAnual = montanteFinal - inv.valor;
+      } else {
+        brutoAnual = inv.valor * (inv.rendimentoBruto / 100);
+      }
+      
       const impostoAnual = brutoAnual * (inv.impostoPercent / 100);
       const liquidoAnual = brutoAnual - impostoAnual;
       investimentosAnual += liquidoAnual;
