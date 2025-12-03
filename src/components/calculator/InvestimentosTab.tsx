@@ -15,32 +15,35 @@ export function InvestimentosTab({ investimentos, onAdd, onUpdate, onRemove }: I
   const [valor, setValor] = useState('');
   const [rendimento, setRendimento] = useState('');
   const [imposto, setImposto] = useState('28');
+  const [tipoJuros, setTipoJuros] = useState<'nominal' | 'composto'>('nominal');
+  const [diasCapitalizacao, setDiasCapitalizacao] = useState('30');
   const [editingId, setEditingId] = useState<string | null>(null);
 
   const handleAdd = () => {
     if (!nome.trim() || !valor) return;
 
+    const investimentoData = {
+      nome: nome.trim(),
+      valor: parseFloat(valor) || 0,
+      rendimentoBruto: parseFloat(rendimento) || 0,
+      impostoPercent: parseFloat(imposto) || 28,
+      tipoJuros,
+      diasCapitalizacao: tipoJuros === 'composto' ? (parseFloat(diasCapitalizacao) || 30) : undefined,
+    };
+
     if (editingId) {
-      onUpdate(editingId, {
-        nome: nome.trim(),
-        valor: parseFloat(valor) || 0,
-        rendimentoBruto: parseFloat(rendimento) || 0,
-        impostoPercent: parseFloat(imposto) || 28,
-      });
+      onUpdate(editingId, investimentoData);
       setEditingId(null);
     } else {
-      onAdd({
-        nome: nome.trim(),
-        valor: parseFloat(valor) || 0,
-        rendimentoBruto: parseFloat(rendimento) || 0,
-        impostoPercent: parseFloat(imposto) || 28,
-      });
+      onAdd(investimentoData);
     }
 
     setNome('');
     setValor('');
     setRendimento('');
     setImposto('28');
+    setTipoJuros('nominal');
+    setDiasCapitalizacao('30');
   };
 
   const handleEdit = (inv: Investimento) => {
@@ -49,6 +52,8 @@ export function InvestimentosTab({ investimentos, onAdd, onUpdate, onRemove }: I
     setValor(inv.valor.toString());
     setRendimento(inv.rendimentoBruto.toString());
     setImposto(inv.impostoPercent.toString());
+    setTipoJuros(inv.tipoJuros || 'nominal');
+    setDiasCapitalizacao(inv.diasCapitalizacao?.toString() || '30');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -58,10 +63,25 @@ export function InvestimentosTab({ investimentos, onAdd, onUpdate, onRemove }: I
     setValor('');
     setRendimento('');
     setImposto('28');
+    setTipoJuros('nominal');
+    setDiasCapitalizacao('30');
   };
 
   const calculateReturns = (inv: Investimento) => {
-    const brutoAnual = inv.valor * (inv.rendimentoBruto / 100);
+    let brutoAnual: number;
+    
+    if (inv.tipoJuros === 'composto' && inv.diasCapitalizacao) {
+      // Juros compostos: A = P * (1 + r/n)^(n*t) - P
+      // n = número de períodos de capitalização por ano (365/diasCapitalizacao)
+      const taxaAnual = inv.rendimentoBruto / 100;
+      const periodosAno = 365 / inv.diasCapitalizacao;
+      const montanteFinal = inv.valor * Math.pow(1 + taxaAnual / periodosAno, periodosAno);
+      brutoAnual = montanteFinal - inv.valor;
+    } else {
+      // Juros nominais (simples)
+      brutoAnual = inv.valor * (inv.rendimentoBruto / 100);
+    }
+    
     const impostoAnual = brutoAnual * (inv.impostoPercent / 100);
     const liquidoAnual = brutoAnual - impostoAnual;
     const liquidoMensal = liquidoAnual / 12;
@@ -138,6 +158,39 @@ export function InvestimentosTab({ investimentos, onAdd, onUpdate, onRemove }: I
             />
           </div>
         </div>
+        
+        {/* Tipo de Juros */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+          <div>
+            <label className="text-sm font-medium text-muted-foreground">Tipo de Juros</label>
+            <select
+              className="input-field mt-1"
+              value={tipoJuros}
+              onChange={(e) => setTipoJuros(e.target.value as 'nominal' | 'composto')}
+            >
+              <option value="nominal">Juros Nominais (Simples)</option>
+              <option value="composto">Juros Compostos</option>
+            </select>
+          </div>
+          {tipoJuros === 'composto' && (
+            <div>
+              <label className="text-sm font-medium text-muted-foreground">Período de Capitalização (dias)</label>
+              <input
+                type="number"
+                className="input-field mt-1"
+                placeholder="30"
+                min="1"
+                max="365"
+                step="1"
+                value={diasCapitalizacao}
+                onChange={(e) => setDiasCapitalizacao(e.target.value)}
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                Ex: 1 = diário, 30 = mensal, 365 = anual
+              </p>
+            </div>
+          )}
+        </div>
         <div className="mt-4 flex gap-2">
           <button onClick={handleAdd} className="btn-primary flex items-center gap-2">
             {editingId ? <Pencil className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
@@ -175,6 +228,9 @@ export function InvestimentosTab({ investimentos, onAdd, onUpdate, onRemove }: I
                       <h4 className="font-semibold text-lg">{inv.nome}</h4>
                       <p className="text-muted-foreground">
                         Capital: {formatCurrency(inv.valor)} • Rendimento: {formatPercent(inv.rendimentoBruto)} • Imposto: {formatPercent(inv.impostoPercent)}
+                        {inv.tipoJuros === 'composto' && inv.diasCapitalizacao && (
+                          <> • Juros Compostos ({inv.diasCapitalizacao} dias)</>
+                        )}
                       </p>
                     </div>
                     <div className="flex gap-2">
