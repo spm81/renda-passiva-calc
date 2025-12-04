@@ -9,6 +9,7 @@ import { DespesasTab } from '@/components/calculator/DespesasTab';
 import { InvestimentosTab } from '@/components/calculator/InvestimentosTab';
 import { ResultadosTab } from '@/components/calculator/ResultadosTab';
 import { ExportButtons } from '@/components/calculator/ExportButtons';
+import { PrintableReport } from '@/components/calculator/PrintableReport';
 import { Building2, Calculator } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -176,6 +177,16 @@ const Index = () => {
             <ResultadosTab resultados={resultados} />
           </>
         )}
+
+        {/* Printable Report - Hidden on screen, visible on print */}
+        <PrintableReport
+          currentUser={currentUser}
+          capitalHumano={capitalHumano}
+          calculatedImoveis={calculatedImoveis}
+          despesas={despesas}
+          investimentos={investimentos}
+          resultados={resultados}
+        />
       </main>
 
       {/* Footer */}

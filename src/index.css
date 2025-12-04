@@ -233,3 +233,50 @@
     text-wrap: balance;
   }
 }
+
+/* Print Styles */
+@media print {
+  body {
+    background: white !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Hide everything except print report */
+  .no-print,
+  header,
+  footer,
+  nav,
+  .tab-button,
+  button:not(.print-trigger) {
+    display: none !important;
+  }
+
+  /* Show print report */
+  .print-report {
+    display: block !important;
+    padding: 20px !important;
+  }
+
+  /* Hide main app content */
+  main > *:not(.print-report) {
+    display: none !important;
+  }
+
+  /* Page setup */
+  @page {
+    margin: 1cm;
+    size: A4;
+  }
+
+  /* Ensure colors print */
+  .text-green-700 {
+    color: #15803d !important;
+  }
+  .text-red-600 {
+    color: #dc2626 !important;
+  }
+  .bg-gray-50 {
+    background-color: #f9fafb !important;
+  }
+}
