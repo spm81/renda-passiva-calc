@@ -269,6 +269,22 @@
     size: A4;
   }
 
+  /* Prevent sections from being split across pages */
+  .print-section {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  section {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  table {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
   /* Ensure colors print */
   .text-green-700 {
     color: #15803d !important;
@@ -279,4 +295,15 @@
   .bg-gray-50 {
     background-color: #f9fafb !important;
   }
+}
+
+/* Export container for PNG */
+.export-container {
+  position: fixed;
+  left: -9999px;
+  top: 0;
+  width: 800px;
+  background: white;
+  padding: 32px;
+  color: black;
 }

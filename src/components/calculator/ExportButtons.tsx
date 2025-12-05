@@ -1,11 +1,9 @@
 import { Button } from '@/components/ui/button';
 import { FileText } from 'lucide-react';
-import { toast } from 'sonner';
 
 export function ExportButtons() {
   const handlePrint = () => {
     window.print();
-    toast.success('Use Ctrl+P para salvar como PDF ou imprimir');
   };
 
   return (
