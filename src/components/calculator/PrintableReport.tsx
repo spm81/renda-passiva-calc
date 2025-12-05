@@ -44,16 +44,16 @@ export function PrintableReport({
   };
 
   return (
-    <div className="print-report hidden print:block p-8 bg-white text-black">
+    <div id="printable-report" className="print-report hidden print:block p-8 bg-white text-black">
       {/* Header */}
-      <div className="text-center mb-8 border-b-2 border-gray-300 pb-4">
+      <div className="text-center mb-8 border-b-2 border-gray-300 pb-4 print-section">
         <h1 className="text-2xl font-bold">Relatório de Renda Passiva</h1>
         {currentUser && <p className="text-gray-600">Utilizador: {currentUser}</p>}
         <p className="text-gray-500 text-sm">Gerado em: {new Date().toLocaleDateString('pt-PT')}</p>
       </div>
 
       {/* Capital Humano */}
-      <section className="mb-6">
+      <section className="mb-6 print-section">
         <h2 className="text-lg font-bold border-b border-gray-300 pb-2 mb-3">1. Capital Humano</h2>
         {capitalHumano.length === 0 ? (
           <p className="text-gray-500 italic">Sem registos</p>
@@ -85,14 +85,14 @@ export function PrintableReport({
       </section>
 
       {/* Imóveis */}
-      <section className="mb-6">
+      <section className="mb-6 print-section">
         <h2 className="text-lg font-bold border-b border-gray-300 pb-2 mb-3">2. Imóveis</h2>
         {calculatedImoveis.length === 0 ? (
           <p className="text-gray-500 italic">Sem registos</p>
         ) : (
           <>
             {calculatedImoveis.map((imovel) => (
-              <div key={imovel.id} className="mb-4 p-3 border border-gray-200 rounded">
+              <div key={imovel.id} className="mb-4 p-3 border border-gray-200 rounded print-section">
                 <h3 className="font-semibold mb-2">{imovel.nome}</h3>
                 <div className="grid grid-cols-2 gap-2 text-sm">
                   <div>Renda: {formatCurrency(imovel.renda)}/mês</div>
@@ -118,7 +118,7 @@ export function PrintableReport({
       </section>
 
       {/* Despesas Extras */}
-      <section className="mb-6">
+      <section className="mb-6 print-section">
         <h2 className="text-lg font-bold border-b border-gray-300 pb-2 mb-3">3. Despesas Extras</h2>
         {despesas.length === 0 ? (
           <p className="text-gray-500 italic">Sem registos</p>
@@ -150,7 +150,7 @@ export function PrintableReport({
       </section>
 
       {/* Investimentos */}
-      <section className="mb-6">
+      <section className="mb-6 print-section">
         <h2 className="text-lg font-bold border-b border-gray-300 pb-2 mb-3">4. Investimentos</h2>
         {investimentos.length === 0 ? (
           <p className="text-gray-500 italic">Sem registos</p>
@@ -159,7 +159,7 @@ export function PrintableReport({
             {investimentos.map((inv) => {
               const retorno = calcularRetornoInvestimento(inv);
               return (
-                <div key={inv.id} className="mb-3 p-3 border border-gray-200 rounded">
+                <div key={inv.id} className="mb-3 p-3 border border-gray-200 rounded print-section">
                   <h3 className="font-semibold">{inv.nome}</h3>
                   <div className="grid grid-cols-2 gap-2 text-sm mt-1">
                     <div>Capital: {formatCurrency(inv.valor)}</div>
@@ -178,7 +178,7 @@ export function PrintableReport({
       </section>
 
       {/* Resumo Final */}
-      <section className="mt-8 p-4 border-2 border-gray-400 rounded bg-gray-50">
+      <section className="mt-8 p-4 border-2 border-gray-400 rounded bg-gray-50 print-section">
         <h2 className="text-xl font-bold mb-4 text-center">Resumo Final</h2>
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div className="space-y-2">
