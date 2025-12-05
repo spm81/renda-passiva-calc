@@ -265,24 +265,39 @@
 
   /* Page setup */
   @page {
-    margin: 1cm;
+    margin: 10mm;
     size: A4;
   }
 
-  /* Prevent sections from being split across pages */
-  .print-section {
+  /* Prevent ALL sections and items from being split across pages */
+  .print-section,
+  section,
+  .print-report section,
+  .print-report .border,
+  .print-report > div {
     break-inside: avoid !important;
     page-break-inside: avoid !important;
+    -webkit-column-break-inside: avoid !important;
+    orphans: 999 !important;
+    widows: 999 !important;
   }
 
-  section {
+  /* Each investment/property card must stay together */
+  .print-report .rounded {
     break-inside: avoid !important;
     page-break-inside: avoid !important;
+    display: block !important;
   }
 
   table {
     break-inside: avoid !important;
     page-break-inside: avoid !important;
+  }
+
+  /* Force sections to start on new page if they don't fit */
+  .print-report section {
+    break-before: auto;
+    page-break-before: auto;
   }
 
   /* Ensure colors print */
