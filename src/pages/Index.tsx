@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { TabType } from '@/types/calculator';
 import { useCalculator } from '@/hooks/useCalculator';
 import { TabNavigation } from '@/components/calculator/TabNavigation';
@@ -18,6 +18,7 @@ const Index = () => {
   const [currentUser, setCurrentUser] = useState<string | null>(() => {
     return localStorage.getItem('calculadora_currentUser');
   });
+  const reportRef = useRef<HTMLDivElement>(null);
   
   const {
     capitalHumano,
@@ -173,13 +174,14 @@ const Index = () => {
 
         {activeTab === 'resultados' && (
           <>
-            <ExportButtons />
+            <ExportButtons reportRef={reportRef} />
             <ResultadosTab resultados={resultados} />
           </>
         )}
 
         {/* Printable Report - Hidden on screen, visible on print */}
         <PrintableReport
+          ref={reportRef}
           currentUser={currentUser}
           capitalHumano={capitalHumano}
           calculatedImoveis={calculatedImoveis}
