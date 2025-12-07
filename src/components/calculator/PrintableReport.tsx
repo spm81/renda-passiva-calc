@@ -1,3 +1,4 @@
+import { forwardRef } from 'react';
 import { CapitalHumano, CalculatedImovel, DespesaExtra, Investimento, Resultados } from '@/types/calculator';
 import { formatCurrency } from '@/lib/format';
 
@@ -10,14 +11,14 @@ interface PrintableReportProps {
   resultados: Resultados;
 }
 
-export function PrintableReport({
+export const PrintableReport = forwardRef<HTMLDivElement, PrintableReportProps>(({
   currentUser,
   capitalHumano,
   calculatedImoveis,
   despesas,
   investimentos,
   resultados,
-}: PrintableReportProps) {
+}, ref) => {
   const totalCapitalHumanoMensal = capitalHumano.reduce((sum, ch) => sum + ch.rendimentoLiquido, 0);
   const totalCapitalHumanoAnual = totalCapitalHumanoMensal * 12;
 
@@ -44,7 +45,7 @@ export function PrintableReport({
   };
 
   return (
-    <div id="printable-report" className="print-report hidden print:block p-8 bg-white text-black">
+    <div ref={ref} id="printable-report" className="print-report hidden print:block p-8 bg-white text-black">
       {/* Header */}
       <div className="text-center mb-8 border-b-2 border-gray-300 pb-4 print-section">
         <h1 className="text-2xl font-bold">Relatório de Renda Passiva</h1>
@@ -229,4 +230,6 @@ export function PrintableReport({
       </section>
     </div>
   );
-}
+});
+
+PrintableReport.displayName = 'PrintableReport';
