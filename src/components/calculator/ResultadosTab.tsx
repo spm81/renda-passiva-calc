@@ -33,6 +33,11 @@ export function ResultadosTab({ resultados }: ResultadosTabProps) {
       anual: resultados.capitalHumanoAnual,
     },
     {
+      name: 'Investimentos',
+      mensal: resultados.investimentosMensal,
+      anual: resultados.investimentosAnual,
+    },
+    {
       name: 'Rendas',
       mensal: resultados.totalRendaMensal,
       anual: resultados.totalRendaAnual,
@@ -51,11 +56,6 @@ export function ResultadosTab({ resultados }: ResultadosTabProps) {
       name: 'Despesas Extras',
       mensal: resultados.despesasExtrasMensal,
       anual: resultados.despesasExtrasAnual,
-    },
-    {
-      name: 'Investimentos',
-      mensal: resultados.investimentosMensal,
-      anual: resultados.investimentosAnual,
     },
     {
       name: 'Renda Final',
