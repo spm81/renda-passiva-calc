@@ -33,6 +33,7 @@ const Index = () => {
     updateImovel,
     removeImovel,
     addDespesa,
+    updateDespesa,
     removeDespesa,
     addInvestimento,
     updateInvestimento,

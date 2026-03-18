@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { DespesaExtra } from '@/types/calculator';
-import { Plus, Trash2, Receipt } from 'lucide-react';
+import { Plus, Trash2, Receipt, Pencil, X } from 'lucide-react';
 import { formatCurrency } from '@/lib/format';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 
 interface DespesasTabProps {
   despesas: DespesaExtra[];
   onAdd: (despesa: Omit<DespesaExtra, 'id'>) => void;
+  onUpdate: (id: string, updates: Partial<DespesaExtra>) => void;
   onRemove: (id: string) => void;
 }
 
