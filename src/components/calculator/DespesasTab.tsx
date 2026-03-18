@@ -18,7 +18,6 @@ export function DespesasTab({ despesas, onAdd, onUpdate, onRemove }: DespesasTab
   const [valorMensal, setValorMensal] = useState('');
   const [valorAnual, setValorAnual] = useState('');
 
-  // Editing state
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editNome, setEditNome] = useState('');
   const [editValorMensal, setEditValorMensal] = useState('');
@@ -27,13 +26,7 @@ export function DespesasTab({ despesas, onAdd, onUpdate, onRemove }: DespesasTab
     if (!nome.trim() || !valorMensal) return;
     const val = parseFloat(valorMensal);
     if (val <= 0) return;
-
-    onAdd({
-      nome: nome.trim(),
-      valorMensal: val,
-      valorAnual: val * 12,
-    });
-
+    onAdd({ nome: nome.trim(), valorMensal: val, valorAnual: val * 12 });
     setNome('');
     setValorMensal('');
   };
@@ -42,13 +35,7 @@ export function DespesasTab({ despesas, onAdd, onUpdate, onRemove }: DespesasTab
     if (!nome.trim() || !valorAnual) return;
     const val = parseFloat(valorAnual);
     if (val <= 0) return;
-
-    onAdd({
-      nome: nome.trim(),
-      valorMensal: val / 12,
-      valorAnual: val,
-    });
-
+    onAdd({ nome: nome.trim(), valorMensal: val / 12, valorAnual: val });
     setNome('');
     setValorAnual('');
   };
@@ -68,21 +55,14 @@ export function DespesasTab({ despesas, onAdd, onUpdate, onRemove }: DespesasTab
   const confirmEdit = (id: string) => {
     const val = parseFloat(editValorMensal);
     if (!editNome.trim() || isNaN(val) || val <= 0) return;
-    onUpdate(id, {
-      nome: editNome.trim(),
-      valorMensal: val,
-      valorAnual: val * 12,
-    });
+    onUpdate(id, { nome: editNome.trim(), valorMensal: val, valorAnual: val * 12 });
     cancelEdit();
   };
 
   const totalMensal = despesas.reduce((acc, d) => acc + d.valorMensal, 0);
   const totalAnual = despesas.reduce((acc, d) => acc + d.valorAnual, 0);
 
-  const chartData = despesas.map((d) => ({
-    name: d.nome,
-    value: d.valorMensal,
-  }));
+  const chartData = despesas.map((d) => ({ name: d.nome, value: d.valorMensal }));
 
   return (
     <div className="animate-fade-in">
@@ -157,7 +137,6 @@ export function DespesasTab({ despesas, onAdd, onUpdate, onRemove }: DespesasTab
             <div className="space-y-3">
               {despesas.map((despesa) =>
                 editingId === despesa.id ? (
-                  // Inline edit row
                   <div key={despesa.id} className="p-3 bg-primary/5 border border-primary/20 rounded-lg space-y-2">
                     <input
                       type="text"
@@ -180,29 +159,17 @@ export function DespesasTab({ despesas, onAdd, onUpdate, onRemove }: DespesasTab
                         />
                       </div>
                       <div className="flex items-end gap-1">
-                        <button
-                          onClick={() => confirmEdit(despesa.id)}
-                          className="btn-primary"
-                          title="Confirmar"
-                        >
+                        <button onClick={() => confirmEdit(despesa.id)} className="btn-primary" title="Confirmar">
                           <Check className="w-4 h-4" />
                         </button>
-                        <button
-                          onClick={cancelEdit}
-                          className="btn-secondary"
-                          title="Cancelar"
-                        >
+                        <button onClick={cancelEdit} className="btn-secondary" title="Cancelar">
                           <X className="w-4 h-4" />
                         </button>
                       </div>
                     </div>
                   </div>
                 ) : (
-                  // Normal row
-                  <div
-                    key={despesa.id}
-                    className="flex items-center justify-between p-3 bg-secondary/50 rounded-lg"
-                  >
+                  <div key={despesa.id} className="flex items-center justify-between p-3 bg-secondary/50 rounded-lg">
                     <div>
                       <p className="font-medium">{despesa.nome}</p>
                       <p className="text-sm text-muted-foreground">
@@ -210,18 +177,10 @@ export function DespesasTab({ despesas, onAdd, onUpdate, onRemove }: DespesasTab
                       </p>
                     </div>
                     <div className="flex gap-1">
-                      <button
-                        onClick={() => startEdit(despesa)}
-                        className="btn-secondary"
-                        title="Editar"
-                      >
+                      <button onClick={() => startEdit(despesa)} className="btn-secondary" title="Editar">
                         <Pencil className="w-4 h-4" />
                       </button>
-                      <button
-                        onClick={() => onRemove(despesa.id)}
-                        className="btn-danger"
-                        title="Apagar"
-                      >
+                      <button onClick={() => onRemove(despesa.id)} className="btn-danger" title="Apagar">
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
