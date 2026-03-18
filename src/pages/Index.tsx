@@ -160,6 +160,7 @@ const Index = () => {
           <DespesasTab
             despesas={despesas}
             onAdd={addDespesa}
+            onUpdate={updateDespesa}
             onRemove={removeDespesa}
           />
         )}
