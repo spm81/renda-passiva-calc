@@ -176,11 +176,21 @@ export function DespesasTab({ despesas, onAdd, onUpdate, onRemove }: DespesasTab
                         {formatCurrency(despesa.valorMensal)}/mês • {formatCurrency(despesa.valorAnual)}/ano
                       </p>
                     </div>
-                    <div className="flex gap-1">
-                      <button onClick={() => startEdit(despesa)} className="btn-secondary" title="Editar">
+                    <div className="flex items-center gap-1">
+                      <button
+                        type="button"
+                        onClick={() => startEdit(despesa)}
+                        className="btn-secondary"
+                        title="Editar"
+                      >
                         <Pencil className="w-4 h-4" />
                       </button>
-                      <button onClick={() => onRemove(despesa.id)} className="btn-danger" title="Apagar">
+                      <button
+                        type="button"
+                        onClick={() => onRemove(despesa.id)}
+                        className="btn-danger"
+                        title="Apagar"
+                      >
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
