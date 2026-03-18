@@ -1,21 +1,27 @@
 import { useState } from 'react';
 import { DespesaExtra } from '@/types/calculator';
-import { Plus, Trash2, Receipt } from 'lucide-react';
+import { Plus, Trash2, Receipt, Pencil, X, Check } from 'lucide-react';
 import { formatCurrency } from '@/lib/format';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 
 interface DespesasTabProps {
   despesas: DespesaExtra[];
   onAdd: (despesa: Omit<DespesaExtra, 'id'>) => void;
+  onUpdate: (id: string, updates: Partial<DespesaExtra>) => void;
   onRemove: (id: string) => void;
 }
 
 const COLORS = ['#3498db', '#2ecc71', '#e74c3c', '#f39c12', '#9b59b6', '#1abc9c', '#34495e', '#e67e22'];
 
-export function DespesasTab({ despesas, onAdd, onRemove }: DespesasTabProps) {
+export function DespesasTab({ despesas, onAdd, onUpdate, onRemove }: DespesasTabProps) {
   const [nome, setNome] = useState('');
   const [valorMensal, setValorMensal] = useState('');
   const [valorAnual, setValorAnual] = useState('');
+
+  // Editing state
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editNome, setEditNome] = useState('');
+  const [editValorMensal, setEditValorMensal] = useState('');
 
   const handleAddMensal = () => {
     if (!nome.trim() || !valorMensal) return;
@@ -45,6 +51,29 @@ export function DespesasTab({ despesas, onAdd, onRemove }: DespesasTabProps) {
 
     setNome('');
     setValorAnual('');
+  };
+
+  const startEdit = (despesa: DespesaExtra) => {
+    setEditingId(despesa.id);
+    setEditNome(despesa.nome);
+    setEditValorMensal(despesa.valorMensal.toFixed(2));
+  };
+
+  const cancelEdit = () => {
+    setEditingId(null);
+    setEditNome('');
+    setEditValorMensal('');
+  };
+
+  const confirmEdit = (id: string) => {
+    const val = parseFloat(editValorMensal);
+    if (!editNome.trim() || isNaN(val) || val <= 0) return;
+    onUpdate(id, {
+      nome: editNome.trim(),
+      valorMensal: val,
+      valorAnual: val * 12,
+    });
+    cancelEdit();
   };
 
   const totalMensal = despesas.reduce((acc, d) => acc + d.valorMensal, 0);
@@ -126,25 +155,79 @@ export function DespesasTab({ despesas, onAdd, onRemove }: DespesasTabProps) {
             </div>
           ) : (
             <div className="space-y-3">
-              {despesas.map((despesa) => (
-                <div
-                  key={despesa.id}
-                  className="flex items-center justify-between p-3 bg-secondary/50 rounded-lg"
-                >
-                  <div>
-                    <p className="font-medium">{despesa.nome}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {formatCurrency(despesa.valorMensal)}/mês • {formatCurrency(despesa.valorAnual)}/ano
-                    </p>
+              {despesas.map((despesa) =>
+                editingId === despesa.id ? (
+                  // Inline edit row
+                  <div key={despesa.id} className="p-3 bg-primary/5 border border-primary/20 rounded-lg space-y-2">
+                    <input
+                      type="text"
+                      className="input-field w-full"
+                      value={editNome}
+                      onChange={(e) => setEditNome(e.target.value)}
+                      placeholder="Nome da despesa"
+                    />
+                    <div className="flex gap-2">
+                      <div className="flex-1">
+                        <label className="text-xs text-muted-foreground">Valor Mensal (€)</label>
+                        <input
+                          type="number"
+                          className="input-field w-full mt-1"
+                          min="0"
+                          step="0.01"
+                          value={editValorMensal}
+                          onChange={(e) => setEditValorMensal(e.target.value)}
+                          onKeyDown={(e) => e.key === 'Enter' && confirmEdit(despesa.id)}
+                        />
+                      </div>
+                      <div className="flex items-end gap-1">
+                        <button
+                          onClick={() => confirmEdit(despesa.id)}
+                          className="btn-primary"
+                          title="Confirmar"
+                        >
+                          <Check className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={cancelEdit}
+                          className="btn-secondary"
+                          title="Cancelar"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
                   </div>
-                  <button
-                    onClick={() => onRemove(despesa.id)}
-                    className="btn-danger"
+                ) : (
+                  // Normal row
+                  <div
+                    key={despesa.id}
+                    className="flex items-center justify-between p-3 bg-secondary/50 rounded-lg"
                   >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </div>
-              ))}
+                    <div>
+                      <p className="font-medium">{despesa.nome}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {formatCurrency(despesa.valorMensal)}/mês • {formatCurrency(despesa.valorAnual)}/ano
+                      </p>
+                    </div>
+                    <div className="flex gap-1">
+                      <button
+                        onClick={() => startEdit(despesa)}
+                        className="btn-secondary"
+                        title="Editar"
+                      >
+                        <Pencil className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => onRemove(despesa.id)}
+                        className="btn-danger"
+                        title="Apagar"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                )
+              )}
 
               <div className="divider" />
               <div className="flex justify-between items-center p-3 bg-primary/10 rounded-lg">
