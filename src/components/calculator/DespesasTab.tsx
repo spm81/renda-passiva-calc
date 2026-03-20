@@ -180,7 +180,7 @@ export function DespesasTab({ despesas, onAdd, onUpdate, onRemove }: DespesasTab
                       <button
                         type="button"
                         onClick={() => startEdit(despesa)}
-                        className="btn-secondary"
+                        className="inline-flex items-center justify-center p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
                         title="Editar"
                       >
                         <Pencil className="w-4 h-4" />
